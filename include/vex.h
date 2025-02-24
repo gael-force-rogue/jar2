@@ -37,5 +37,3 @@
 inline void delay(int time) {
     wait(time, vex::msec);
 };
-
-extern vex::brain Brain;

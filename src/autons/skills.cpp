@@ -7,60 +7,44 @@ void printpoint(std::string name) {
 };
 
 void skills() {
+    digital_out Clamp = digital_out(Brain.ThreeWirePort.B);
     intake.setAllianceColor(RED);
-
-    pneumatics Clamp = pneumatics(Brain.ThreeWirePort.B);
+    intake.antiJamEnabled = false;
 
     chassis.set_coordinates(0, 0, 48);
 
     // Alliance
     lift.driverInterrupt = false;
     lift.spinTo(200);
-    delay(800);
+    delay(1300);
 
     // Clamp
-    chassis.drive_settle_error = 3;
-    chassis.drive_distance(-12);
-    lift.spinTo(5);
-    chassis.swing_timeout = 400;
-    chassis.left_swing_to_angle(33);
-    chassis.drive_distance(-4);
+    // float X_position, float Y_position, float drive_min_voltage, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout
+    chassis.drive_to_point(-8, -13, 0, 10, 8, 4, 50, 2000);
+    chassis.drive_stop(coast);
+    delay(300);
     Clamp.set(true);
-    delay(1000);
+    lift.spinTo(0);
+    delay(300);
 
     // Ring 1
-    chassis.turn_timeout = 700;
     chassis.turn_to_angle(-100);
     intake.spin(100);
-    chassis.drive_to_pose(-25, -5, -110);
-    printpoint("Ring 1");
+    chassis.drive_to_point(-30, -8);
 
     // Ring 2
-    chassis.turn_timeout = 500;
-    chassis.turn_to_point(-49, -25);
-    chassis.drive_settle_error = 9;
-    chassis.drive_to_point(-49, -25);
+    chassis.left_swing_to_angle(-135);
+    chassis.drive_to_point(-53, -26);
+
+    // Ring 3
     lift.spinTo(20);
-    chassis.drive_settle_error = 3;
-    chassis.drive_to_point(-75, -33);
+    chassis.drive_to_point(-73, -31);
+    delay(500);
 
-    // Neutral
-    chassis.drive_to_point(-61, -40);
-    chassis.right_swing_to_angle(-180);
+    // Ring 4 & Neutral
+    chassis.drive_to_point(-53, -26);
+    chassis.turn_to_angle(-180);
+    chassis.drive_to_point(-57, -45);
 
-    // DO NOT EDIT
-
-    chassis.drive_stop(hold);
-    wait(1000, msec);
-    chassis.drive_stop(coast);
-
-    while (1) {
-        Brain.Screen.clearScreen();
-        Brain.Screen.printAt(5, 20, "X: %f", chassis.get_X_position());
-        Brain.Screen.printAt(5, 40, "Y: %f", chassis.get_Y_position());
-        Brain.Screen.printAt(5, 60, "Heading: %f", chassis.get_absolute_heading());
-        Brain.Screen.printAt(5, 80, "ForwardTracker: %f", chassis.get_ForwardTracker_position());
-        Brain.Screen.printAt(5, 100, "SidewaysTracker: %f", chassis.get_SidewaysTracker_position());
-        delay(20);
-    };
+    lift.spinTo(160);
 };

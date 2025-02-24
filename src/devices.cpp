@@ -11,7 +11,7 @@ void Lift::spin(float velocity) {
     this->motor.spin(vex::fwd, velocity, vex::pct);
 };
 
-void Lift::startMaintainingPosition(float kP, float kD, float maxSpeed) {
+void Lift::startBackgroundTaskLoop(float kP, float kD, float maxSpeed) {
     float previousError = 0;
     this->motor.setBrake(hold);
     while (true) {
@@ -38,4 +38,9 @@ void Lift::startMaintainingPosition(float kP, float kD, float maxSpeed) {
 
         delay(20);
     };
+};
+
+void Lift::spinTo(float newTarget) {
+    this->driverInterrupt = false;
+    this->target = newTarget;
 };

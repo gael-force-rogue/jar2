@@ -7,18 +7,6 @@ competition Competition;
 
 controller Controller;
 
-brain Brain = brain();
-
-motor left1 = motor(PORT20, ratio6_1, false);
-motor left2 = motor(PORT16, ratio6_1, true);
-motor left3 = motor(PORT1, ratio6_1, false);
-motor right1 = motor(PORT9, ratio6_1, true);
-motor right2 = motor(PORT8, ratio6_1, false);
-motor right3 = motor(PORT10, ratio6_1, true);
-
-Intake intake = Intake(PORT19, true, PORT5);
-Lift lift = Lift(PORT18, true, PORT14, false);
-
 Drive chassis(
     // drive_setup enum
     TANK_TWO_ROTATION,
@@ -101,45 +89,31 @@ void pre_auton() {
 
 void autonomous(void) {
     auto_started = true;
-
     float start = vex::timer::system();
+
     skills();
+
     float end = vex::timer::system();
     printf("Auton took: %f ms\n", end - start);
-};
 
-void pneumaticsThreadF() {
-    // pneumatics Clamp = pneumatics(Brain.ThreeWirePort.B);
-    // // pneumatics Knocker = pneumatics(Brain.ThreeWirePort.A);
+    chassis.drive_stop(hold);
+    wait(1000, msec);
+    chassis.drive_stop(coast);
 
-    // while (true) {
-    //     // Clamp
-    //     if (Controller.ButtonA.pressing()) {
-    //         Clamp.close();
-    //         waitUntil(!Controller.ButtonA.pressing());
-    //     } else if (Controller.ButtonB.pressing()) {
-    //         Clamp.open();
-    //         waitUntil(!Controller.ButtonB.pressing());
-    //     };
-
-    //     // Knocker
-    //     if (Controller.ButtonY.pressing()) {
-    //         // Knocker.toggle();
-    //         waitUntil(!Controller.ButtonY.pressing());
-    //     };
-
-    //     // Lift Macro
-    //     if (Controller.ButtonUp.pressing()) {
-    //         lift.spinTo(20);
-    //         lift.driverInterrupt = false;
-    //     };
-
-    //     delay(20);
-    // }
+    while (1) {
+        Brain.Screen.clearScreen();
+        Brain.Screen.printAt(5, 20, "X: %f", chassis.get_X_position());
+        Brain.Screen.printAt(5, 40, "Y: %f", chassis.get_Y_position());
+        Brain.Screen.printAt(5, 60, "Heading: %f", chassis.get_absolute_heading());
+        Brain.Screen.printAt(5, 80, "ForwardTracker: %f", chassis.get_ForwardTracker_position());
+        Brain.Screen.printAt(5, 100, "SidewaysTracker: %f", chassis.get_SidewaysTracker_position());
+        delay(20);
+    };
 };
 
 void usercontrol(void) {
-    // thread pneumaticsThread(pneumaticsThreadF);
+    ButtonNewPressWatcher knockerYButton(Controller.ButtonY);
+    digital_out Clamp = digital_out(Brain.ThreeWirePort.B);
 
     while (1) {
         chassis.control_arcade();
@@ -150,7 +124,10 @@ void usercontrol(void) {
         } else if (Controller.ButtonR1.pressing()) {
             intake.spin(-100);
         } else {
-            intake.spin(0);
+            intake.stop(coast);
+            if (Controller.ButtonLeft.pressing()) {
+                frontstageMotor.spin(fwd, 100, pct);
+            }
         };
 
         // Lift
@@ -162,12 +139,38 @@ void usercontrol(void) {
             lift.spin(0);
         };
 
+        // Clamp
+        if (Controller.ButtonA.pressing()) {
+            Clamp.set(true);
+        } else if (Controller.ButtonB.pressing()) {
+            Clamp.set(false);
+        };
+
+        // Knocker
+        // if (knockerYButton.isNewPress()) {
+        //     if (Knocker.value() == 0) {
+        //         Knocker.set(true);
+        //     } else {
+        //         Knocker.set(false);
+        //     };
+        // };
+
+        // Lift Up
+        if (Controller.ButtonUp.pressing()) {
+            lift.spinTo(20);
+            lift.driverInterrupt = false;
+        };
+
         delay(20);
     };
 };
 
 void liftThreadF() {
-    lift.startMaintainingPosition(1.5, 4, 100);
+    lift.startBackgroundTaskLoop(3, 0, 100);
+};
+
+void intakeThreadF() {
+    intake.startBackgroundTaskLoop();
 };
 
 int main() {
@@ -175,6 +178,7 @@ int main() {
     Competition.drivercontrol(usercontrol);
 
     vex::thread liftThread(liftThreadF);
+    vex::thread intakeThread(intakeThreadF);
 
     pre_auton();
 
