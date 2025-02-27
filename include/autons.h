@@ -4,6 +4,7 @@
 extern Drive chassis;
 
 void default_constants();
+void odom_constants();
 
 /// TEST AUTONS
 void drive_test();
@@ -18,3 +19,4 @@ void holonomic_odom_test();
 void red_solo_awp(bool half_only, bool elims);
 void blue_solo_awp(bool half_only, bool elims);
 void skills();
+void test_auton();

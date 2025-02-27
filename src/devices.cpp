@@ -2,7 +2,7 @@
 
 float Lift::position() {
     float angle = (float)rotation.angle(rotationUnits::deg);
-    if (angle > 220) return angle - 180;
+    if (angle > 300) return angle - 180;
     return angle;
 };
 
@@ -18,7 +18,6 @@ void Lift::startBackgroundTaskLoop(float kP, float kD, float maxSpeed) {
         if (!this->driverInterrupt) {
             float error = this->target - this->position();
             float derivative = error - previousError;
-            previousError = error;
 
             float power = (kP * error) + (kD * derivative);
             power = clamp(power, -maxSpeed, maxSpeed);
@@ -27,13 +26,16 @@ void Lift::startBackgroundTaskLoop(float kP, float kD, float maxSpeed) {
                 derivative = 0;
             };
 
+            printf("Lift: %f, %f\n", derivative, power);
+
             // DO NOT USE HELPER SPIN FUNCTION
-            if (fabs(error) > 2) {
+            if (fabs(error) > 5) {
                 this->motor.spin(fwd, power, pct);
             } else {
                 this->motor.spin(fwd, 0, pct);
                 this->motor.stop(hold);
             };
+            previousError = error;
         };
 
         delay(20);

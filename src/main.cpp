@@ -166,7 +166,7 @@ void usercontrol(void) {
 };
 
 void liftThreadF() {
-    lift.startBackgroundTaskLoop(3, 0, 100);
+    lift.startBackgroundTaskLoop(1, 5.6, 100);
 };
 
 void intakeThreadF() {

@@ -9,8 +9,8 @@ void default_constants() {
     chassis.set_swing_constants(12, .4, .001, 2, 15);
 
     // Each exit condition set is in the form of (settle_error, settle_time, timeout).
-    chassis.set_drive_exit_conditions(5, 300, 5000);
-    chassis.set_turn_exit_conditions(2, 300, 3000);
+    chassis.set_drive_exit_conditions(8, 100, 2000);
+    chassis.set_turn_exit_conditions(2, 300, 1000);
     chassis.set_swing_exit_conditions(4, 300, 2000);
 }
 
@@ -18,7 +18,7 @@ void odom_constants() {
     default_constants();
     chassis.heading_max_voltage = 10;
     chassis.drive_max_voltage = 8;
-    chassis.drive_settle_error = 3;
+    // chassis.drive_settle_error = 3;
     chassis.boomerang_lead = .2;
     chassis.drive_min_voltage = 0;
 }
