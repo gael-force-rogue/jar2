@@ -1,5 +1,37 @@
 #include "devices.h"
 
+void Intake::startBackgroundTaskLoop() {
+    while (true) {
+        if (antiJamEnabled && motor.velocity(vex::rpm) < 1 && targetVelocity != 0) {
+            motor.spin(vex::fwd, -100, vex::pct);
+            delay(100);
+            motor.spin(vex::fwd, 100, vex::pct);
+            delay(100);
+            motor.spin(vex::fwd, targetVelocity, vex::pct);
+        };
+
+        if (colorSortEnabled) {
+            double hue = optical.hue();
+            bool isRed = optical.color() == vex::color::red;
+            bool isBlue = hue >= 110 && hue <= 250;
+
+            if (this->allianceColor == RED) {
+                if (isRed && shouldStopForNextRing) {
+                    motor.stop();
+                } else if (isBlue) {
+                    this->ejectRing();
+                };
+            } else if (this->allianceColor == BLUE) {
+                if (isBlue && shouldStopForNextRing) {
+                    motor.stop();
+                } else if (isRed) {
+                    this->ejectRing();
+                };
+            };
+        };
+    };
+};
+
 float Lift::position() {
     float angle = (float)rotation.angle(rotationUnits::deg);
     if (angle > 300) return angle - 180;
@@ -25,8 +57,6 @@ void Lift::startBackgroundTaskLoop(float kP, float kD, float maxSpeed) {
             if (previousError > 0 && error < 0) {
                 derivative = 0;
             };
-
-            printf("Lift: %f, %f\n", derivative, power);
 
             // DO NOT USE HELPER SPIN FUNCTION
             if (fabs(error) > 5) {

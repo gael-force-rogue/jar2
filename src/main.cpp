@@ -112,7 +112,6 @@ void autonomous(void) {
 };
 
 void usercontrol(void) {
-    ButtonNewPressWatcher knockerYButton(Controller.ButtonY);
     digital_out Clamp = digital_out(Brain.ThreeWirePort.B);
 
     while (1) {

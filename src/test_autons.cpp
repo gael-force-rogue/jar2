@@ -3,7 +3,7 @@
 
 void default_constants() {
     // Each constant set is in the form of (maxVoltage, kP, kI, kD, startI).
-    chassis.set_drive_constants(10, 1.5, 0, 10, 0);
+    chassis.set_drive_constants(10, 1.5, 0, 8, 0);
     chassis.set_heading_constants(6, .4, 0, 1, 0);
     chassis.set_turn_constants(12, .4, .03, 4, 15);
     chassis.set_swing_constants(12, .4, .001, 2, 15);
@@ -11,7 +11,7 @@ void default_constants() {
     // Each exit condition set is in the form of (settle_error, settle_time, timeout).
     chassis.set_drive_exit_conditions(8, 100, 2000);
     chassis.set_turn_exit_conditions(2, 300, 1000);
-    chassis.set_swing_exit_conditions(4, 300, 2000);
+    chassis.set_swing_exit_conditions(4, 300, 500);
 }
 
 void odom_constants() {

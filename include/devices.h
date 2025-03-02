@@ -4,60 +4,6 @@
 
 using namespace vex;
 
-class ButtonNewPressWatcher {
-   private:
-    bool wasPressed = false;
-    controller::button button;
-
-   public:
-    ButtonNewPressWatcher(const controller::button button) : button(button) {};
-
-    /**
-     * @brief Returns whether the button is newly pressed.
-     * @param currentState The current state of the button.
-     */
-    inline bool isNewPress() {
-        bool isPressed = this->button.pressing();
-        if (isPressed && !wasPressed) {
-            wasPressed = true;
-            return true;
-        };
-        wasPressed = isPressed;
-        return false;
-    };
-};
-
-/**
- * @brief Publicly extends vex::pneumatics to add toggle functionality.
- * @param port Pneumatic port. (e.g. Brain.ThreeWirePort.A)
- */
-class Pneumatic {
-   private:
-    vex::pneumatics pneumatic;
-
-    bool isDeployed = false;
-
-   public:
-    Pneumatic(vex::triport::port port, bool startingMode) : pneumatic(port), isDeployed(startingMode) {};
-
-    inline void open() {
-        this->pneumatic.open();
-    }
-
-    inline void close() {
-        this->pneumatic.close();
-    }
-
-    inline void toggle() {
-        isDeployed = !isDeployed;
-        if (isDeployed) {
-            pneumatic.close();
-        } else {
-            pneumatic.open();
-        };
-    };
-};
-
 enum AllianceColor {
     RED,
     BLUE
@@ -121,42 +67,7 @@ class Intake {
     /**
      * @brief Starts a loop for anti-jam and color sort. Both can be disabled.
      */
-    inline void startBackgroundTaskLoop() {
-        while (true) {
-            if (antiJamEnabled && motor.velocity(vex::rpm) < 1 && targetVelocity != 0) {
-                motor.spin(vex::fwd, -100, vex::pct);
-                delay(100);
-                motor.spin(vex::fwd, 100, vex::pct);
-                delay(100);
-                motor.spin(vex::fwd, targetVelocity, vex::pct);
-            };
-
-            if (colorSortEnabled) {
-                double hue = optical.hue();
-                bool isRed = optical.color() == vex::color::red;
-                bool isBlue = hue >= 110 && hue <= 250;
-
-                if (this->allianceColor == RED) {
-                    if (isRed && shouldStopForNextRing) {
-                        motor.stop();
-                    } else if (isBlue) {
-                        this->ejectRing();
-                    };
-                } else if (this->allianceColor == BLUE) {
-                    if (isBlue && shouldStopForNextRing) {
-                        motor.stop();
-                    } else if (isRed) {
-                        this->ejectRing();
-                    };
-                };
-            };
-        };
-    };
-};
-
-enum LiftState {
-    STANDBY = -30,
-    LOAD = 0
+    void startBackgroundTaskLoop();
 };
 
 /**
@@ -200,6 +111,11 @@ class Lift {
         motor.setBrake(vex::brakeType::hold);
         rotation.resetPosition();
         rotation.setPosition(0, vex::rotationUnits::deg);
+    };
+
+    inline void coast() {
+        this->driverInterrupt = true;
+        this->motor.stop(vex::brakeType::coast);
     };
 
     float position();
