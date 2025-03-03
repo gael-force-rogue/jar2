@@ -10,7 +10,6 @@ void skills() {
     odom_constants();
     digital_out Clamp = digital_out(Brain.ThreeWirePort.B);
     intake.setAllianceColor(RED);
-    intake.antiJamEnabled = false;
 
     chassis.set_coordinates(0, 0, 48);
 
@@ -25,11 +24,11 @@ void skills() {
     // chassis.drive_to_point(-4.5, -5, 0, 10, 8, 1, 50, 2000);
     // chassis.drive_distance(-12, 34);
     chassis.drive_settle_error = 2;
-    chassis.drive_timeout = 1000;
+    chassis.drive_timeout = 700;
     chassis.swing_timeout = 350;
     chassis.drive_distance(-11);
     chassis.left_swing_to_angle(26);
-    chassis.drive_distance(-3);
+    chassis.drive_distance(-7);
     delay(300);
     Clamp.set(true);
     lift.spinTo(50);
@@ -40,40 +39,69 @@ void skills() {
     chassis.turn_to_point(-33, -8);
     lift.spinTo(-2);
     intake.spin(100);
-    chassis.drive_to_point(-33, -8, 0, 10, 8, 7, 50, 2000);
+    chassis.drive_to_point(-33, -8, 0, 10, 4, 7, 50, 2000);
 
     // Ring 2 waypoint
     chassis.left_swing_to_angle(-135);
-    chassis.drive_to_point(-53, -24, 4, 12, 8, 2, 50, 4000);
+    chassis.drive_to_point(-53, -24, 4, 12, 8, 8, 50, 4000);
 
     lift.spinTo(22);
 
     // Ring 2
+    intake.antiJamEnabled = false;
     chassis.drive_settle_error = 5;
-    chassis.drive_to_point(-75, -30);
+    chassis.drive_to_point(-80, -34);
     delay(500);
 
     // Ring 3 & Neutral
     chassis.turn_settle_error = 0.1;
-    chassis.drive_to_point(-49, -24, 0, 7, 8, 0.25, 400, 3000);
+    chassis.drive_to_point(-52, -26, 0, 5, 8, 0.5, 400, 8000);
     chassis.turn_to_angle(-180);
 
     chassis.drive_max_voltage = 7;
 
     intake.stop(coast);
     frontstageMotor.spin(fwd, 100, pct);
-    chassis.drive_distance(28);
+    chassis.drive_settle_error = 2;
+    chassis.drive_distance(32, -180);
     intake.spin(-30);
-    lift.spinTo(170);
+    lift.spin(100);
     delay(1000);
-
-    chassis.drive_to_point(-49, -26, 0, 7, 8, 1, 400, 3000);
+    lift.spin(-25);
+    delay(500);
+    frontstageMotor.stop();
     intake.spin();
+    intake.antiJamEnabled = true;
+    lift.spinTo(-5);
 
+    chassis.drive_distance(-20);
+    delay(700);
+    chassis.drive_distance(15, -180);
+    delay(500);
+    chassis.drive_to_point(-52, -28, 0, 7, 8, 1, 400, 3000);
+
+    // Ring 4, 5, 6
     chassis.turn_to_angle(90);
-    lift.spinTo(0);
+    lift.spinTo(-5);
 
-    chassis.drive_to_point(-13, -29.5, 0, 9, 8, 1, 200, 3000);
-    chassis.drive_to_point(-2, -29.5, 0, 9, 8, 1, 200, 3000);
-    chassis.drive_to_point(-13, -29.5, 0, 9, 8, 1, 200, 3000);
+    chassis.drive_to_point(-16, -34, 0, 4, 8, 4, 200, 3000);
+    delay(700);
+    chassis.drive_max_voltage = 5;
+    chassis.drive_to_point(2, -34, 0, 4, 8, 1, 200, 3000);
+    delay(500);
+
+    // Ring 6
+    odom_constants();
+    chassis.drive_settle_error = 1;
+    chassis.drive_distance(-28);
+    chassis.turn_to_angle(145);
+    chassis.drive_distance(23);
+    delay(500);
+    chassis.swing_timeout = 3000;
+    chassis.right_swing_to_angle(-90);
+    chassis.turn_to_angle(-35);
+    Clamp.set(false);
+    chassis.drive_distance(-26);
+
+    chassis.drive_to_point(-80, -34, 0, 10, 8, 1, 200, 5000);
 };

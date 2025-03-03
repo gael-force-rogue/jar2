@@ -3,11 +3,13 @@
 void Intake::startBackgroundTaskLoop() {
     while (true) {
         if (antiJamEnabled && motor.velocity(vex::rpm) < 1 && targetVelocity != 0) {
+            printf("Velocity: %f\n", motor.velocity(vex::rpm));
             motor.spin(vex::fwd, -100, vex::pct);
-            delay(100);
+            delay(400);
             motor.spin(vex::fwd, 100, vex::pct);
-            delay(100);
+            delay(200);
             motor.spin(vex::fwd, targetVelocity, vex::pct);
+            delay(200);
         };
 
         if (colorSortEnabled) {
@@ -59,7 +61,7 @@ void Lift::startBackgroundTaskLoop(float kP, float kD, float maxSpeed) {
             };
 
             // DO NOT USE HELPER SPIN FUNCTION
-            if (fabs(error) > 5) {
+            if (fabs(error) > 3) {
                 this->motor.spin(fwd, power, pct);
             } else {
                 this->motor.spin(fwd, 0, pct);
