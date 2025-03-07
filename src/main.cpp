@@ -4,7 +4,6 @@
 
 using namespace vex;
 competition Competition;
-
 controller Controller;
 
 Drive chassis(
@@ -91,6 +90,7 @@ void autonomous(void) {
     auto_started = true;
     float start = vex::timer::system();
 
+    // red_solo_awp(false, false);
     skills();
 
     float end = vex::timer::system();
@@ -113,7 +113,6 @@ void autonomous(void) {
 
 void usercontrol(void) {
     digital_out Clamp = digital_out(Brain.ThreeWirePort.B);
-
     while (1) {
         chassis.control_arcade();
 

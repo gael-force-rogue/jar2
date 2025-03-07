@@ -18,3 +18,5 @@ extern motor frontstageMotor;
 
 extern Intake intake;
 extern Lift lift;
+
+void vexcodeInit(void);

@@ -1,9 +1,19 @@
 #include "devices.h"
 
+void Intake::ejectRing() {
+    wait(50, msec);
+    this->stop();
+    wait(1000, msec);
+    this->spin(100);
+    wait(20, msec);
+};
+
 void Intake::startBackgroundTaskLoop() {
+    // optical.setLightPower(0, percent);
+    // optical.setLight(ledState::on);
     while (true) {
         if (antiJamEnabled && motor.velocity(vex::rpm) < 1 && targetVelocity != 0) {
-            printf("Velocity: %f\n", motor.velocity(vex::rpm));
+            printf("Anti Jam!\n");
             motor.spin(vex::fwd, -100, vex::pct);
             delay(400);
             motor.spin(vex::fwd, 100, vex::pct);
@@ -14,8 +24,8 @@ void Intake::startBackgroundTaskLoop() {
 
         if (colorSortEnabled) {
             double hue = optical.hue();
-            bool isRed = optical.color() == vex::color::red;
-            bool isBlue = hue >= 110 && hue <= 250;
+            bool isRed = hue > 355 || hue < 15;
+            bool isBlue = (hue >= 110) && (hue <= 250);
 
             if (this->allianceColor == RED) {
                 if (isRed && shouldStopForNextRing) {
@@ -31,6 +41,8 @@ void Intake::startBackgroundTaskLoop() {
                 };
             };
         };
+
+        delay(20);
     };
 };
 

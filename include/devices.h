@@ -27,13 +27,7 @@ class Intake {
     /**
      * @brief Ejects a ring.
      */
-    inline void ejectRing() {
-        wait(15, msec);
-        this->stop();
-        wait(1000, msec);
-        this->spin(100);
-        wait(20, msec);
-    };
+    void ejectRing();
 
    public:
     bool antiJamEnabled = true;
