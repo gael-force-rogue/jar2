@@ -1,10 +1,5 @@
-#include <string>
 
 #include "config.h"
-
-void printpoint(std::string name) {
-    printf("%s: %f, %f %f\n", name.c_str(), chassis.get_X_position(), chassis.get_Y_position(), chassis.get_absolute_heading());
-};
 
 void skills() {
     odom_constants();
@@ -63,11 +58,12 @@ void skills() {
 
     chassis.drive_max_voltage = 7;
 
+    // Score Neutral
     intake.stop(hold);
     frontstageMotor.spin(fwd, 100, pct);
     chassis.drive_settle_error = 1;
-    chassis.drive_to_pose(-56, -46, 180, 0.3, 0, 0, 5, 8);
-    chassis.drive_distance(4);
+    // chassis.drive_to_pose(-55.5, -46, 180, 0.3, 0, 0, 5, 8);
+    chassis.drive_distance(30, 180);
     conveyerMotor.spin(fwd, -50, pct);
     // conveyerMotor.stop(coast);
     lift.spin(100);
@@ -78,12 +74,14 @@ void skills() {
     lift.spinTo(-5);
     delay(1000);
 
+    // Ring 3
     chassis.turn_timeout = 1200;
+    chassis.drive_max_voltage = 6;
     chassis.drive_distance(-20);
-    delay(700);
     chassis.drive_distance(15, -180);
     delay(500);
-    chassis.drive_to_point(-53, -32, 0, 7, 8, 1, 400, 3000);
+    chassis.drive_to_point(-55, -32, 0, 7, 8, 1, 400, 3000);
+    chassis.drive_max_voltage = 10;
 
     // Ring 4, 5, 6
     chassis.turn_to_angle(88);
@@ -103,15 +101,19 @@ void skills() {
     chassis.drive_max_voltage = 10;
     chassis.turn_to_angle(145);
     chassis.drive_distance(23);
-    chassis.swing_timeout = 1500;
+    chassis.turn_timeout = 800;
+    chassis.turn_settle_error = 10;
     chassis.turn_to_angle(180);
+    chassis.turn_settle_error = 1;
     chassis.turn_to_angle(-75);
     Clamp.set(false);
     chassis.drive_distance(-23);
 
-    //
+    // Travel to blue ring cornor mogo
+    intake.stop();
     lift.spinTo(22);
     chassis.drive_to_point(-53, -30, 8, 12, 8, 20, 50, 4000);
+    intake.spin(100);
     chassis.drive_to_point(-100, -33, 0, 10, 8, 1, 200, 6000);
     intake.antiJamEnabled = false;
     chassis.turn_to_angle(165);
@@ -123,8 +125,7 @@ void skills() {
     Clamp.set(true);
 
     chassis.drive_max_voltage = 11;
-
-    chassis.turn_timeout = 1200;
+    chassis.turn_timeout = 1000;
     chassis.turn_to_angle(145);
     chassis.drive_distance(25);
     chassis.turn_to_angle(37.5);
@@ -138,7 +139,7 @@ void skills() {
     chassis.drive_to_pose(-104, -15, 0, 0.3, 0, 0, 10, 3000);
     chassis.turn_to_angle(180);
     printpoint("2nd Empty Mogo");
-    chassis.drive_max_voltage = 5.5;
+    chassis.drive_max_voltage = 4;
     chassis.drive_to_point(-107, 14, 0, 6, 8, 1, 300, 5000);
     delay(300);
     Clamp.set(true);
@@ -147,7 +148,8 @@ void skills() {
     chassis.turn_timeout = 2000;
     chassis.turn_settle_time = 400;
     chassis.turn_to_angle(-90);
-    chassis.drive_to_pose(-110, 13, -90, 0.2, 0, 0, 6, 6);
+    printpoint("Alliance Stake Allignment");
+    chassis.drive_to_pose(-110, 14, -90, 0.1, 0, 0, 6, 3);
     chassis.turn_to_angle(-90);
 
     intake.spin(-25);
@@ -156,4 +158,7 @@ void skills() {
     lift.spinTo(-5);
 
     chassis.drive_distance(-20);
+    chassis.turn_to_angle(45);
+
+    // chassis.drive_to_point(-113, 28, 0, 10, 8, 8, 50, 3000);
 };

@@ -1,7 +1,7 @@
 #include "devices.h"
 
 void Intake::ejectRing() {
-    wait(50, msec);
+    wait(75, msec);
     this->stop();
     wait(1000, msec);
     this->spin(100);
@@ -30,12 +30,14 @@ void Intake::startBackgroundTaskLoop() {
             if (this->allianceColor == RED) {
                 if (isRed && shouldStopForNextRing) {
                     motor.stop();
+                    spin(0);
                 } else if (isBlue) {
                     this->ejectRing();
                 };
             } else if (this->allianceColor == BLUE) {
                 if (isBlue && shouldStopForNextRing) {
                     motor.stop();
+                    spin(0);
                 } else if (isRed) {
                     this->ejectRing();
                 };

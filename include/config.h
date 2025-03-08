@@ -20,3 +20,7 @@ extern Intake intake;
 extern Lift lift;
 
 void vexcodeInit(void);
+
+inline void printpoint(std::string name) {
+    printf("%s: %f, %f %f\n", name.c_str(), chassis.get_X_position(), chassis.get_Y_position(), chassis.get_absolute_heading());
+};

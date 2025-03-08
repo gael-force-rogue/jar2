@@ -90,8 +90,8 @@ void autonomous(void) {
     auto_started = true;
     float start = vex::timer::system();
 
-    // red_solo_awp(false, false);
-    skills();
+    blue_solo_awp(false, false);
+    // skills();
 
     float end = vex::timer::system();
     printf("Auton took: %f ms\n", end - start);
@@ -129,9 +129,9 @@ void usercontrol(void) {
         };
 
         // Lift
-        if (Controller.ButtonL1.pressing()) {
+        if (Controller.ButtonL2.pressing()) {
             lift.spin(100);
-        } else if (Controller.ButtonL2.pressing()) {
+        } else if (Controller.ButtonL1.pressing()) {
             lift.spin(-100);
         } else if (lift.driverInterrupt) {
             lift.spin(0);
@@ -172,6 +172,7 @@ void intakeThreadF() {
 };
 
 int main() {
+    printf("Battery: %f", Brain.Battery.capacity());
     Competition.autonomous(autonomous);
     Competition.drivercontrol(usercontrol);
 
